@@ -185,9 +185,8 @@ python -m http.server 8000
 ```
 
 The application will be available at:
-- Frontend: http://localhost:8000
-- Backend API: http://localhost:5000
-- WebSocket: ws://localhost:5000
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.100.3:5000
 
 ---
 
