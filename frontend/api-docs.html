@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - GestureBridge AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-white text-black">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-2xl font-bold text-gray-900">GestureBridge AI</a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/" class="border-transparent text-gray-500 hover:border-black hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Home
+                        </a>
+                        <a href="help-center.html" class="border-transparent text-gray-500 hover:border-black hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Help Center
+                        </a>
+                        <a href="api-docs.html" class="border-black text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            API Docs
+                        </a>
+                        <a href="community.html" class="border-transparent text-gray-500 hover:border-black hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Community
+                        </a>
+                        <a href="contact.html" class="border-transparent text-gray-500 hover:border-black hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Contact
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <a href="login.html" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                        Sign in
+                    </a>
+                    <a href="register.html" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- API Documentation Content -->
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row gap-8">
+            <!-- Sidebar Navigation -->
+            <div class="w-full md:w-64 flex-shrink-0">
+                <div class="sticky top-6">
+                    <h3 class="text-lg font-semibold mb-4">API Reference</h3>
+                    <nav class="space-y-1">
+                        <a href="#authentication" class="block px-3 py-2 rounded-md hover:bg-gray-100">Authentication</a>
+                        <a href="#streaming" class="block px-3 py-2 rounded-md hover:bg-gray-100">Streaming API</a>
+                        <a href="#languages" class="block px-3 py-2 rounded-md hover:bg-gray-100">Languages API</a>
+                        <a href="#feedback" class="block px-3 py-2 rounded-md hover:bg-gray-100">Feedback API</a>
+                        <a href="#websockets" class="block px-3 py-2 rounded-md hover:bg-gray-100">WebSocket API</a>
+                        <a href="#errors" class="block px-3 py-2 rounded-md hover:bg-gray-100">Error Handling</a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="flex-1">
+                <!-- Introduction -->
+                <section class="mb-12">
+                    <h1 class="text-4xl font-bold mb-4">API Documentation</h1>
+                    <p class="text-lg text-gray-600 mb-6">
+                        Welcome to the GestureBridge AI API documentation. Our API enables you to integrate real-time sign language translation capabilities into your applications.
+                    </p>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <h4 class="font-semibold mb-2">Base URL</h4>
+                        <code class="bg-black text-white px-3 py-2 rounded">https://api.gesturebridge.ai/v1</code>
+                    </div>
+                </section>
+
+                <!-- Authentication -->
+                <section id="authentication" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4">Authentication</h2>
+                    <p class="mb-4">All API requests require authentication using JWT tokens.</p>
+                    
+                    <div class="space-y-6">
+                        <!-- Login Endpoint -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold">Login</h3>
+                                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">POST</span>
+                            </div>
+                            <code class="block bg-gray-100 p-3 rounded mb-4">/api/auth/login</code>
+                            <h4 class="font-semibold mb-2">Request Body</h4>
+                            <pre class="bg-gray-100 p-3 rounded mb-4">
+{
+    "email": "user@example.com",
+    "password": "your_password"
+}</pre>
+                            <h4 class="font-semibold mb-2">Response</h4>
+                            <pre class="bg-gray-100 p-3 rounded">
+{
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "token_type": "bearer",
+    "expires_in": 3600
+}</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Streaming API -->
+                <section id="streaming" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4">Streaming API</h2>
+                    <p class="mb-4">The Streaming API enables real-time sign language translation.</p>
+
+                    <div class="space-y-6">
+                        <!-- Start Stream -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold">Start Stream</h3>
+                                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">POST</span>
+                            </div>
+                            <code class="block bg-gray-100 p-3 rounded mb-4">/api/streaming/start</code>
+                            <h4 class="font-semibold mb-2">Request Body</h4>
+                            <pre class="bg-gray-100 p-3 rounded mb-4">
+{
+    "language": "ASL",
+    "quality": "high"
+}</pre>
+                            <h4 class="font-semibold mb-2">Response</h4>
+                            <pre class="bg-gray-100 p-3 rounded">
+{
+    "session_id": "stream_123",
+    "status": "ready",
+    "websocket_url": "wss://..."
+}</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Languages API -->
+                <section id="languages" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4">Languages API</h2>
+                    <p class="mb-4">Access and manage supported sign languages.</p>
+
+                    <div class="space-y-6">
+                        <!-- Get Languages -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold">Get Supported Languages</h3>
+                                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">GET</span>
+                            </div>
+                            <code class="block bg-gray-100 p-3 rounded mb-4">/api/languages</code>
+                            <h4 class="font-semibold mb-2">Response</h4>
+                            <pre class="bg-gray-100 p-3 rounded">
+{
+    "languages": [
+        {
+            "code": "ASL",
+            "name": "American Sign Language",
+            "accuracy": 99.2
+        },
+        // ...
+    ]
+}</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Feedback API -->
+                <section id="feedback" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4">Feedback API</h2>
+                    <p class="mb-4">Submit and manage translation feedback.</p>
+
+                    <div class="space-y-6">
+                        <!-- Submit Feedback -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold">Submit Feedback</h3>
+                                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">POST</span>
+                            </div>
+                            <code class="block bg-gray-100 p-3 rounded mb-4">/api/feedback/submit</code>
+                            <h4 class="font-semibold mb-2">Request Body</h4>
+                            <pre class="bg-gray-100 p-3 rounded mb-4">
+{
+    "translation_id": "123",
+    "rating": 5,
+    "comment": "Great translation!"
+}</pre>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- WebSocket API -->
+                <section id="websockets" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4">WebSocket API</h2>
+                    <p class="mb-4">Real-time communication for live translation.</p>
+
+                    <div class="space-y-6">
+                        <!-- WebSocket Events -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <h3 class="text-xl font-semibold mb-4">Events</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-semibold">connect</h4>
+                                    <p class="text-gray-600">Emitted when connection is established</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold">translation_result</h4>
+                                    <p class="text-gray-600">Received when translation is complete</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Error Handling -->
+                <section id="errors" class="mb-12">
+                    <h2 class="text-2xl font-bold mb-4">Error Handling</h2>
+                    <p class="mb-4">Common error codes and their meanings.</p>
+
+                    <div class="border border-gray-200 rounded-lg p-6">
+                        <table class="min-w-full">
+                            <thead>
+                                <tr>
+                                    <th class="text-left py-2">Code</th>
+                                    <th class="text-left py-2">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="py-2">400</td>
+                                    <td>Bad Request</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">401</td>
+                                    <td>Unauthorized</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">404</td>
+                                    <td>Not Found</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">429</td>
+                                    <td>Too Many Requests</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-2">500</td>
+                                    <td>Internal Server Error</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">GestureBridge AI</h3>
+                    <p class="text-gray-400 mb-4">Breaking communication barriers with AI-powered sign language translation.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="help-center.html" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="api-docs.html" class="hover:text-white transition-colors">API Documentation</a></li>
+                        <li><a href="community.html" class="hover:text-white transition-colors">Community</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="privacy.html" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="accessibility.html" class="hover:text-white transition-colors">Accessibility</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GestureBridge AI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Add dark mode styles -->
+    <style>
+      body.dark {
+        background-color: #232946;
+        color: #eebbc3;
+      }
+      body.dark nav {
+        background-color: #121629;
+        color: #eebbc3;
+      }
+      body.dark .bg-white {
+        background-color: #232946 !important;
+        color: #eebbc3 !important;
+      }
+      body.user-is-tabbing button:focus, body.user-is-tabbing a:focus {
+        outline: 2px solid #6366f1;
+        outline-offset: 2px;
+      }
+      .prediction-result {
+        font-size: 2em;
+        color: #232946;
+        text-align: center;
+        margin-top: 24px;
+      }
+    </style>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('sw.js');
+        });
+      }
+    </script>
+
+    <!-- Apple Touch Icon for PWA -->
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-192x192.png">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-2xl font-bold text-gray-900">GestureBridge AI</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span id="username" class="text-gray-700 mr-4"></span>
+                    <button id="logoutBtn" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Launch Tkinter App Button (Top) -->
+        <div class="w-full flex justify-center mt-6">
+            <button id="launchTkinterTopBtn" class="bg-green-600 text-white px-6 py-3 rounded shadow hover:bg-green-700 transition text-lg font-bold">
+                Launch Sign Language Tkinter App
+            </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="border-b border-gray-200">
+            <nav class="-mb-px flex" aria-label="Tabs">
+                <button class="tab-btn active w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="video-to-text">
+                    <i class="fas fa-video mr-2"></i>
+                    Sign to Text
+                </button>
+                <button class="tab-btn w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="history">
+                    <i class="fas fa-history mr-2"></i>
+                    History
+                </button>
+                <button class="tab-btn w-1/3 py-4 px-1 text-center border-b-2 font-medium text-sm" data-tab="tutorials">
+                    <i class="fas fa-book mr-2"></i>
+                    Tutorials
+                </button>
+            </nav>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="mt-6">
+            <!-- Video to Text Tab -->
+            <div id="video-to-text" class="tab-content active">
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Sign Language App
+                        </h3>
+                        <div class="mt-4">
+                            <div class="flex justify-center">
+                                <video id="videoPreview" class="w-full max-w-2xl border rounded-lg" autoplay muted></video>
+                            </div>
+                            <div class="mt-4 flex justify-center space-x-4">
+                                <button id="startRecording" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                    <i class="fas fa-record-vinyl mr-2"></i> Start Recording
+                                </button>
+                                <button id="stopRecording" class="hidden inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                    <i class="fas fa-stop mr-2"></i> Stop Recording
+                                </button>
+                            </div>
+                            <div id="result" class="mt-4 p-4 bg-gray-50 rounded-lg hidden">
+                                <h4 class="text-sm font-medium text-gray-900">Translation Result:</h4>
+                                <p id="translationText" class="mt-1 text-sm text-gray-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab: Display prediction history -->
+            <div id="history" class="tab-content hidden">
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Translation History
+                        </h3>
+                        <div class="mt-4">
+                            <div class="flow-root">
+                                <ul id="historyList" class="-my-5 divide-y divide-gray-200">
+                                    <!-- History items will be populated here -->
+                                </ul>
+                            </div>
+                            <div id="noHistory" class="text-center py-4 text-gray-500 hidden">
+                                No translation history available
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tutorials Tab -->
+            <div id="tutorials" class="tab-content hidden">
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Sign Language Tutorials</h3>
+                        <div class="mt-4">
+                            <p class="mb-4 text-gray-700">Watch these videos to learn the basics of sign language and how to use the app:</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <iframe width="100%" height="220" src="https://www.youtube.com/embed/1RJlYp5YQGg" title="Sign Language Alphabet" frameborder="0" allowfullscreen aria-label="Sign Language Alphabet Tutorial"></iframe>
+                                    <p class="mt-2 text-sm text-gray-600">Sign Language Alphabet</p>
+                                </div>
+                                <div>
+                                    <iframe width="100%" height="220" src="https://www.youtube.com/embed/7w1zQF6b7qA" title="Sign Language Basics" frameborder="0" allowfullscreen aria-label="Sign Language Basics Tutorial"></iframe>
+                                    <p class="mt-2 text-sm text-gray-600">Sign Language Basics</p>
+                                </div>
+                            </div>
+                            <div class="mt-6">
+                                <h4 class="text-md font-semibold mb-2">How to Use GestureBridge AI</h4>
+                                <ol class="list-decimal ml-6 text-gray-700">
+                                    <li>Login or register for an account.</li>
+                                    <li>Go to the dashboard and click "Start Live Demo".</li>
+                                    <li>Show your hand signs to the webcam and view live predictions.</li>
+                                    <li>Use the "Speak" button to hear the translation.</li>
+                                    <li>Check your prediction history and submit feedback.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community Tab -->
+            <div id="community" class="tab-content hidden">
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Community Forum</h3>
+                        <div class="mt-4">
+                            <form id="communityForm" class="mb-6">
+                                <label for="communityMsg" class="block text-sm font-medium text-gray-700 mb-1">Share your experience or suggestion:</label>
+                                <textarea id="communityMsg" class="w-full border rounded p-2 mb-2" rows="3" aria-label="Community Message"></textarea>
+                                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Post</button>
+                            </form>
+                            <ul id="communityList" class="divide-y divide-gray-200">
+                                <!-- Community posts will be populated here -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tab -->
+            <div id="admin" class="tab-content hidden">
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Admin Dashboard</h3>
+                        <div class="mt-4">
+                            <div id="adminStats" class="mb-6"></div>
+                            <h4 class="text-md font-semibold mb-2">Recent Feedback</h4>
+                            <ul id="adminFeedbackList" class="divide-y divide-gray-200"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gamification Tab -->
+            <div id="gamification" class="tab-content hidden">
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Gamification & Challenges</h3>
+                        <div class="mt-4">
+                            <h4 class="text-md font-semibold mb-2">Your Badges</h4>
+                            <div id="badgeList" class="flex flex-wrap gap-4 mb-6"></div>
+                            <h4 class="text-md font-semibold mb-2">Leaderboard</h4>
+                            <ul id="leaderboardList" class="divide-y divide-gray-200 mb-6"></ul>
+                            <h4 class="text-md font-semibold mb-2">Sign Language Quiz</h4>
+                            <form id="quizForm" class="mb-4">
+                                <label for="quizInput" class="block text-sm font-medium text-gray-700 mb-1">What is the sign for "A"?</label>
+                                <input id="quizInput" type="text" class="w-full border rounded p-2 mb-2" aria-label="Quiz Answer">
+                                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Submit Answer</button>
+                                <div id="quizMsg" class="mt-2 text-green-600 hidden">Correct!</div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Dashboard Tab -->
+            <div id="admin-dashboard" class="tab-content hidden">
+                <div class="bg-white shadow sm:rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">Admin Dashboard</h3>
+                        <div class="mt-4">
+                            <button id="fetchUsersBtn" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Fetch Users</button>
+                            <ul id="userList" class="mt-6 divide-y divide-gray-200"></ul>
+                            <div id="adminError" class="mt-4 text-red-600 hidden"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Form -->
+        <div class="mt-8 flex justify-center">
+            <form id="feedbackForm" class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                <h4 class="text-lg font-semibold mb-2">Feedback on Prediction</h4>
+                <label for="feedbackText" class="block text-sm font-medium text-gray-700 mb-1">Your feedback:</label>
+                <textarea id="feedbackText" class="w-full border rounded p-2 mb-2" rows="3" aria-label="Feedback"></textarea>
+                <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Submit Feedback</button>
+                <div id="feedbackMsg" class="mt-2 text-green-600 hidden">Thank you for your feedback!</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Live Prediction Result -->
+    <div id="prediction-result" class="prediction-result"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-lg shadow-xl">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p class="mt-4 text-gray-700">Processing...</p>
+        </div>
+    </div>
+
+    <!-- Custom JavaScript -->
+    <script>
+        // Check authentication
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // Display username
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            document.getElementById('username').textContent = user.username;
+        }
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        });
+
+        // Tab switching
+        const tabs = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                tabs.forEach(t => {
+                    t.classList.remove('active', 'border-indigo-500', 'text-indigo-600');
+                    t.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                });
+                tabContents.forEach(content => content.classList.add('hidden'));
+
+                // Add active class to clicked tab and show content
+                tab.classList.add('active', 'border-indigo-500', 'text-indigo-600');
+                tab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                document.getElementById(tab.dataset.tab).classList.remove('hidden');
+            });
+        });
+
+        // Video recording functionality
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        async function setupVideoRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const videoPreview = document.getElementById('videoPreview');
+                videoPreview.srcObject = stream;
+
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    await processVideo(blob);
+                };
+            } catch (error) {
+                console.error('Error accessing camera:', error);
+                alert('Unable to access camera. Please ensure you have granted camera permissions.');
+            }
+        }
+
+        document.getElementById('startRecording').addEventListener('click', () => {
+            recordedChunks = [];
+            mediaRecorder.start();
+            document.getElementById('startRecording').classList.add('hidden');
+            document.getElementById('stopRecording').classList.remove('hidden');
+        });
+
+        document.getElementById('stopRecording').addEventListener('click', () => {
+            mediaRecorder.stop();
+            document.getElementById('stopRecording').classList.add('hidden');
+            document.getElementById('startRecording').classList.remove('hidden');
+        });
+
+        async function processVideo(blob) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('hidden');
+
+            try {
+                const formData = new FormData();
+                formData.append('video', blob);
+
+                const response = await fetch('http://localhost:5000/api/process-video', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to process video');
+                }
+
+                // Display result
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('translationText').textContent = data.text;
+
+            } catch (error) {
+                console.error('Error processing video:', error);
+                alert('Error processing video: ' + error.message);
+            } finally {
+                loadingOverlay.classList.add('hidden');
+            }
+        }
+
+        // Load translation history
+        async function loadHistory() {
+            try {
+                const response = await fetch('http://localhost:5000/api/history', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load history');
+                }
+
+                const historyList = document.getElementById('historyList');
+                const noHistory = document.getElementById('noHistory');
+
+                if (data.history.length === 0) {
+                    noHistory.classList.remove('hidden');
+                    return;
+                }
+
+                historyList.innerHTML = data.history.map(item => `
+                    <li class="py-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900">
+                                    ${item.type === 'video' ? 'Sign to Text' : 'Text to Sign'}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    ${new Date(item.created_at).toLocaleString()}
+                                </p>
+                            </div>
+                            <div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    item.confidence >= 0.8 ? 'bg-green-100 text-green-800' :
+                                    item.confidence >= 0.6 ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-red-100 text-red-800'
+                                }">
+                                    ${Math.round(item.confidence * 100)}% confidence
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading history:', error);
+                alert('Error loading history: ' + error.message);
+            }
+        }
+
+        // Feedback form submission
+        document.getElementById('feedbackForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const feedbackText = document.getElementById('feedbackText').value.trim();
+            const feedbackMsg = document.getElementById('feedbackMsg');
+
+            if (!feedbackText) {
+                alert('Please enter your feedback before submitting.');
+                return;
+            }
+
+            feedbackMsg.classList.add('hidden');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ feedback: feedbackText })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to submit feedback');
+                }
+
+                // Show success message
+                feedbackMsg.classList.remove('hidden');
+                document.getElementById('feedbackText').value = '';
+
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                alert('Error submitting feedback: ' + error.message);
+            }
+        });
+
+        // Community posts loading and submission
+        async function loadCommunityPosts() {
+            try {
+                const response = await fetch('http://localhost:5000/api/community-posts', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load community posts');
+                }
+
+                const communityList = document.getElementById('communityList');
+                communityList.innerHTML = data.posts.map(post => `
+                    <li class="py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">
+                                    ${post.message}
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    Posted by ${post.username} on ${new Date(post.created_at).toLocaleString()}
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading community posts:', error);
+                alert('Error loading community posts: ' + error.message);
+            }
+        }
+
+        document.getElementById('communityForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const communityMsg = document.getElementById('communityMsg').value.trim();
+
+            if (!communityMsg) {
+                alert('Please enter a message before posting.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/community-posts', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: communityMsg })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to post message');
+                }
+
+                // Reload community posts
+                document.getElementById('communityMsg').value = '';
+                loadCommunityPosts();
+
+            } catch (error) {
+                console.error('Error posting message:', error);
+                alert('Error posting message: ' + error.message);
+            }
+        });
+
+        // Admin dashboard functionality
+        async function loadAdminStats() {
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/stats', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load admin stats');
+                }
+
+                const adminStats = document.getElementById('adminStats');
+                adminStats.innerHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-lg shadow">
+                            <p class="text-sm font-medium text-blue-700">Total Users</p>
+                            <p class="text-lg font-semibold text-gray-900">${data.total_users}</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg shadow">
+                            <p class="text-sm font-medium text-green-700">Active Users</p>
+                            <p class="text-lg font-semibold text-gray-900">${data.active_users}</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg shadow">
+                            <p class="text-sm font-medium text-yellow-700">Total Feedback</p>
+                            <p class="text-lg font-semibold text-gray-900">${data.total_feedback}</p>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg shadow">
+                            <p class="text-sm font-medium text-red-700">Pending Feedback</p>
+                            <p class="text-lg font-semibold text-gray-900">${data.pending_feedback}</p>
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                console.error('Error loading admin stats:', error);
+                alert('Error loading admin stats: ' + error.message);
+            }
+        }
+
+        async function loadAdminFeedback() {
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/feedback', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load feedback');
+                }
+
+                const adminFeedbackList = document.getElementById('adminFeedbackList');
+                adminFeedbackList.innerHTML = data.feedback.map(item => `
+                    <li class="py-4">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900">
+                                    ${item.user ? item.user.username : 'Unknown User'}
+                                </p>
+                                <p class="text-sm text-gray-500">
+                                    ${new Date(item.created_at).toLocaleString()}
+                                </p>
+                            </div>
+                            <div>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    item.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                                    'bg-red-100 text-red-800'
+                                }">
+                                    ${item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm text-gray-600">
+                            ${item.feedback}
+                        </div>
+                    </li>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading admin feedback:', error);
+                alert('Error loading admin feedback: ' + error.message);
+            }
+        }
+
+        // Initialize
+        setupVideoRecording();
+        loadHistory();
+        loadCommunityPosts();
+        loadAdminStats();
+        loadAdminFeedback();
+        // Auto-launch final_pred.py Tkinter app on dashboard load
+        // Commented out auto-launch on load to use manual button instead
+        // window.addEventListener('load', () => {
+        //     fetch('http://localhost:5000/api/gui/auto-launch')
+        //         .then(response => response.json())
+        //         .then data => {
+        //             if (data.status === 'success') {
+        //                 console.log('Sign Language GUI auto-launched');
+        //             } else {
+        //                 console.error('Failed to auto-launch GUI:', data.message);
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Error auto-launching GUI:', error);
+        //         });
+        // });
+
+        // Add button click handler to launch Tkinter app
+        document.getElementById('launchTinkerBtn').addEventListener('click', () => {
+            fetch('http://localhost:5000/api/gui/auto-launch')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Sign Language App launched successfully.');
+                    } else {
+                        alert('Failed to launch Sign Language App: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error launching Sign Language App: ' + error);
+                });
+        });
+
+        // New button click handler to launch Tkinter app (top button)
+        document.getElementById('launchTkinterTopBtn').addEventListener('click', function() {
+            fetch('http://localhost:5000/api/gui/auto-launch')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Sign Language Tkinter App launched successfully.');
+                    } else {
+                        alert('Failed to launch Tkinter App: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    alert('Error launching Tkinter App: ' + error);
+                });
+        });
+
+        // Gamification functionality
+        async function loadBadges() {
+            try {
+                const response = await fetch('http://localhost:5000/api/badges', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load badges');
+                }
+
+                const badgeList = document.getElementById('badgeList');
+                badgeList.innerHTML = data.badges.map(badge => `
+                    <div class="flex items-center bg-gray-100 rounded-lg p-4 shadow-sm">
+                        <img src="${badge.image}" alt="${badge.name}" class="w-12 h-12 mr-4 rounded-full">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">${badge.name}</p>
+                            <p class="text-xs text-gray-500">${badge.description}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading badges:', error);
+                alert('Error loading badges: ' + error.message);
+            }
+        }
+
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch('http://localhost:5000/api/leaderboard', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to load leaderboard');
+                }
+
+                const leaderboardList = document.getElementById('leaderboardList');
+                leaderboardList.innerHTML = data.leaderboard.map((user, index) => `
+                    <li class="py-4 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <span class="text-sm font-medium text-gray-900 mr-3">${index + 1}.</span>
+                            <span class="text-sm text-gray-700">${user.username}</span>
+                        </div>
+                        <div>
+                            <span class="text-sm font-medium text-gray-900">${user.score} points</span>
+                        </div>
+                    </li>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                alert('Error loading leaderboard: ' + error.message);
+            }
+        }
+
+        // Quiz functionality
+        document.getElementById('quizForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const quizInput = document.getElementById('quizInput').value.trim();
+            const quizMsg = document.getElementById('quizMsg');
+
+            if (!quizInput) {
+                alert('Please enter an answer before submitting.');
+                return;
+            }
+
+            quizMsg.classList.add('hidden');
+
+            try {
+                const response = await fetch('http://localhost:5000/api/quiz/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ answer: quizInput })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to submit answer');
+                }
+
+                // Show success message
+                quizMsg.classList.remove('hidden');
+                document.getElementById('quizInput').value = '';
+
+                // Reload badges and leaderboard
+                loadBadges();
+                loadLeaderboard();
+
+            } catch (error) {
+                console.error('Error submitting answer:', error);
+                alert('Error submitting answer: ' + error.message);
+            }
+        });
+
+        // Load badges and leaderboard on gamification tab activate
+        document.querySelector('[data-tab="gamification"]').addEventListener('click', () => {
+            loadBadges();
+            loadLeaderboard();
+        });
+
+        // Admin user management functionality
+        document.getElementById('fetchUsersBtn').addEventListener('click', async () => {
+            const userList = document.getElementById('userList');
+            const adminError = document.getElementById('adminError');
+
+            adminError.classList.add('hidden');
+            userList.innerHTML = '';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to fetch users');
+                }
+
+                userList.innerHTML = data.users.map(user => `
+                    <li class="py-4 flex items-center justify-between">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">${user.username}</p>
+                            <p class="text-xs text-gray-500">${user.email}</p>
+                        </div>
+                        <div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                user.role === 'admin' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                            }">
+                                ${user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                            </span>
+                        </div>
+                    </li>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                adminError.classList.remove('hidden');
+                adminError.textContent = 'Error fetching users: ' + error.message;
+            }
+        });
+    </script>
+
+    <!-- Launch Sign Language App Button -->
+    <div class="fixed bottom-4 right-4">
+        <button id="launchTinkerBtn" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
+            Launch Sign Language App
+        </button>
+    </div>
+</body>
+</html>
