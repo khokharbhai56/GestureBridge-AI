@@ -204,7 +204,7 @@ The application will be available at:
    ```
 3. **Run the backend server:**
    ```bash
-   python backend/sign_language_app/live_api.py
+   python backend/sign_language_app/final_pred.py
    ```
 4. **Start the frontend:**
    Open `frontend/dashboard.html` in your browser.
