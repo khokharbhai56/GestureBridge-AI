@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # GestureBridge AI
 
 GestureBridge AI is a modern web application that provides real-time sign language translation using artificial intelligence. The application supports bidirectional translation between sign language and text, making communication more accessible for everyone.
@@ -253,3 +254,6 @@ The application will be available at:
 - For help, use the Community tab or contact the project maintainer
 
 ---
+=======
+# GestureBridge-AI
+>>>>>>> 0bdf590fed75d3cb627ed2fde1fd02985bc58a71
