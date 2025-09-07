@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility - GestureBridge AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-white text-black">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="/" class="text-2xl font-bold text-gray-900">GestureBridge AI</a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="/" class="border-transparent text-gray-500 hover:border-black hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Home
+                        </a>
+                        <a href="help-center.html" class="border-transparent text-gray-500 hover:border-black hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Help Center
+                        </a>
+                        <a href="api-docs.html" class="border-transparent text-gray-500 hover:border-black hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            API Docs
+                        </a>
+                        <a href="community.html" class="border-transparent text-gray-500 hover:border-black hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Community
+                        </a>
+                        <a href="contact.html" class="border-transparent text-gray-500 hover:border-black hover:text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            Contact
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                    <a href="login.html" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                        Sign in
+                    </a>
+                    <a href="register.html" class="bg-black text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Accessibility Content -->
+    <div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-bold mb-8">Accessibility</h1>
+        <p class="text-gray-600 mb-8">
+            GestureBridge AI is committed to ensuring digital accessibility for people with disabilities. We are continually improving the user experience for everyone and applying the relevant accessibility standards.
+        </p>
+
+        <!-- Commitment -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Our Commitment</h2>
+            <div class="space-y-4 text-gray-700">
+                <p>
+                    We strive to ensure that our service is accessible to all users regardless of technology or ability. Our accessibility initiatives include:
+                </p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>WCAG 2.1 Level AA compliance</li>
+                    <li>Regular accessibility audits</li>
+                    <li>User feedback incorporation</li>
+                    <li>Continuous improvement</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Accessibility Features</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Visual Accessibility</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>• High contrast mode</li>
+                        <li>• Adjustable text sizing</li>
+                        <li>• Screen reader compatibility</li>
+                        <li>• Alt text for images</li>
+                        <li>• Color blind friendly design</li>
+                    </ul>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Motor Accessibility</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>• Keyboard navigation</li>
+                        <li>• Large click targets</li>
+                        <li>• Gesture customization</li>
+                        <li>• Touch-friendly interface</li>
+                        <li>• Voice commands</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Cognitive Accessibility</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>• Clear navigation</li>
+                        <li>• Consistent layout</li>
+                        <li>• Simple language</li>
+                        <li>• Progress indicators</li>
+                        <li>• Helpful error messages</li>
+                    </ul>
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Technical Accessibility</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li>• ARIA landmarks</li>
+                        <li>• Semantic HTML</li>
+                        <li>• Focus management</li>
+                        <li>• Responsive design</li>
+                        <li>• Progressive enhancement</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customization Options -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Customization Options</h2>
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Display Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Text Size</label>
+                                <select class="w-full border border-gray-300 rounded-lg p-2">
+                                    <option>Normal</option>
+                                    <option>Large</option>
+                                    <option>Extra Large</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Contrast</label>
+                                <select class="w-full border border-gray-300 rounded-lg p-2">
+                                    <option>Normal</option>
+                                    <option>High</option>
+                                    <option>Maximum</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Input Settings</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Keyboard Navigation</label>
+                                <select class="w-full border border-gray-300 rounded-lg p-2">
+                                    <option>Standard</option>
+                                    <option>Enhanced</option>
+                                    <option>Custom</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Motion Sensitivity</label>
+                                <select class="w-full border border-gray-300 rounded-lg p-2">
+                                    <option>Normal</option>
+                                    <option>Reduced</option>
+                                    <option>Minimal</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Compatibility -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Compatibility</h2>
+            <div class="space-y-4 text-gray-700">
+                <p>Our service is compatible with:</p>
+                <ul class="list-disc list-inside space-y-2">
+                    <li>Screen readers (NVDA, JAWS, VoiceOver)</li>
+                    <li>Speech recognition software</li>
+                    <li>Browser zoom settings</li>
+                    <li>Keyboard-only navigation</li>
+                    <li>Mobile accessibility tools</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Feedback -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-4">Feedback and Support</h2>
+            <div class="bg-black text-white p-8 rounded-lg">
+                <p class="mb-6">
+                    We welcome your feedback on the accessibility of GestureBridge AI. Please let us know if you encounter accessibility barriers.
+                </p>
+                <div class="space-y-4">
+                    <p>Contact us:</p>
+                    <ul class="space-y-2">
+                        <li>Email: accessibility@gesturebridge.ai</li>
+                        <li>Phone: +1 (555) 123-4567</li>
+                        <li>Feedback Form: <a href="contact.html" class="underline">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <h3 class="text-2xl font-bold mb-4">GestureBridge AI</h3>
+                    <p class="text-gray-400 mb-4">Breaking communication barriers with AI-powered sign language translation.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="help-center.html" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="api-docs.html" class="hover:text-white transition-colors">API Documentation</a></li>
+                        <li><a href="community.html" class="hover:text-white transition-colors">Community</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="privacy.html" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="hover:text-white transition-colors">Terms of Service</a></li>
+                        <li><a href="accessibility.html" class="hover:text-white transition-colors">Accessibility</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JavaScript -->
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+.venv
+.python-version
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# MongoDB
+data/
+dump/
+mongod.lock
+
+# ML Model
+backend/model/saved_model/*
+!backend/model/saved_model/.gitkeep
+*.h5
+*.hdf5
+*.pkl
+*.joblib
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.nox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Frontend
+node_modules/
+bower_components/
+*.min.js
+*.min.css
+.sass-cache/
+frontend/dist/
+frontend/build/
+frontend/cache/
+
+# Media files
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.mkv
+uploads/
+media/
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+*.bak
+*.swp
+*.swo
+*~
+
+# Security
+*.pem
+*.key
+*.crt
+*.cer
+*.der
+*.priv
+*.pub
+
+# Documentation
+docs/_build/
+docs/generated/
+site/
+
+# Environment specific
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+
+# Dependencies
+package-lock.json
+yarn.lock
+pip-lock.txt
+
+# Deployment
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite3
+*.db
+
+# System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Backup files
+*.bak
+*.backup
+*~
+*.swp
+
+# Cache directories
+.cache/
+.npm/
+.eslintcache
+.stylelintcache
+
+# Local development
+docker-compose.override.yml
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Redis
+*.rdb
+dump.rdb
