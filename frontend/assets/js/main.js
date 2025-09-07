@@ -1,5 +1,5 @@
-const API_BASE_URL = window.location.hostname === '192.168.100.3' ? 'http://192.168.100.3:5000/api' : 'http://127.0.0.1:5000/api';
-const SOCKET_BASE_URL = window.location.hostname === '192.168.100.3' ? 'http://192.168.100.3:5000' : 'http://127.0.0.1:5000';
+const API_BASE_URL = `http://${window.location.hostname}:5000/api`;
+const SOCKET_BASE_URL = `http://${window.location.hostname}:5000`;
 
 // --- Live Sign Language Demo Integration ---
 let jwtToken = localStorage.getItem('access_token'); // Assume token is stored after login

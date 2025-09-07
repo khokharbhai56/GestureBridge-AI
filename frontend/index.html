@@ -6,7 +6,6 @@
     <title>GestureBridge AI - Making Communication Accessible</title>
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#000000">
     <meta name="description" content="AI-powered sign language translation with real-time streaming and multi-language support">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
@@ -397,48 +396,11 @@
         </div>
     </div>
 
-    <!-- Demo Section -->
-     <div class="text-center mt-6">
-  <button
-    onclick="startSignLanguageDemo()"
-    class="px-6 py-3 bg-green-600 text-white text-lg font-semibold rounded-md hover:bg-green-700 transition"
-  >
-    🎬 Try Sign Language Demo
-  </button>
-</div>
 
-<script>
-function startSignLanguageDemo() {
-  fetch("http://127.0.0.1:5000/api/gui/launch-sign-gui")
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === "success") {
-        alert("✅ Sign Language Translator launching...");
-      } else {
-        alert("❌ Failed to launch: " + data.message);
-      }
-    })
-    .catch(error => {
-      alert("⚠️ Error: " + error.message);
-    });
-}
-</script>
 
-     <button id="demoBtn">Run Sign Language App</button>
+     
 
-<script>
-document.getElementById("demoBtn").addEventListener("click", () => {
-    fetch("http://localhost:8000/launch-sign-language-app")
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "running") {
-                alert("Launching Sign Language App...");
-            } else {
-                alert("Failed: " + (data.error || "Unknown error"));
-            }
-        });
-});
-</script>
+
 
     <div id="demo" class="py-16 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -507,16 +469,16 @@ document.getElementById("demoBtn").addEventListener("click", () => {
                     <h3 class="text-2xl font-bold mb-4">GestureBridge AI</h3>
                     <p class="text-gray-400 mb-4">Breaking communication barriers with AI-powered sign language translation. Real-time, accurate, and accessible for everyone.</p>
                     <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="Twitter">
                             <i class="fab fa-twitter text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="GitHub">
                             <i class="fab fa-github text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="LinkedIn">
                             <i class="fab fa-linkedin text-xl"></i>
                         </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors" aria-label="YouTube">
                             <i class="fab fa-youtube text-xl"></i>
                         </a>
                     </div>
@@ -562,7 +524,7 @@ document.getElementById("demoBtn").addEventListener("click", () => {
             <button id="installPWAPrompt" class="bg-white text-black px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors">
                 Install
             </button>
-            <button id="dismissPWAPrompt" class="text-gray-300 hover:text-white">
+            <button id="dismissPWAPrompt" class="text-gray-300 hover:text-white" aria-label="Dismiss install prompt">
                 <i class="fas fa-times"></i>
             </button>
         </div>
