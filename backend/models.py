@@ -139,6 +139,18 @@ class TranslationModel(BaseModel):
             'total_pages': (total_count + per_page - 1) // per_page
         }
 
+    def update_feedback(self, translation_id, feedback_data):
+        """Update translation with feedback data"""
+        update_data = {
+            'feedback': feedback_data,
+            'updated_at': datetime.utcnow()
+        }
+        result = self.collection.update_one(
+            {'_id': ObjectId(translation_id)},
+            {'$set': update_data}
+        )
+        return result.modified_count > 0
+
 class FeedbackModel(BaseModel):
     """Feedback model for managing user feedback"""
     
@@ -181,13 +193,13 @@ class FeedbackModel(BaseModel):
     def get_user_feedback(self, user_id, page=1, per_page=10):
         """Get paginated feedback for a user"""
         skip = (page - 1) * per_page
-        
+
         feedback_list = list(self.collection.find(
             {'user_id': ObjectId(user_id)}
         ).sort('created_at', DESCENDING).skip(skip).limit(per_page))
-        
+
         total_count = self.collection.count_documents({'user_id': ObjectId(user_id)})
-        
+
         return {
             'feedback': [self.to_dict(f) for f in feedback_list],
             'total': total_count,
@@ -195,6 +207,95 @@ class FeedbackModel(BaseModel):
             'per_page': per_page,
             'total_pages': (total_count + per_page - 1) // per_page
         }
+
+    def get_feedback_by_id(self, feedback_id):
+        """Get feedback by ID"""
+        feedback = self.collection.find_one({'_id': ObjectId(feedback_id)})
+        return self.to_dict(feedback)
+
+    def update_feedback(self, feedback_id, update_data):
+        """Update feedback data"""
+        update_data['updated_at'] = datetime.utcnow()
+        result = self.collection.update_one(
+            {'_id': ObjectId(feedback_id)},
+            {'$set': update_data}
+        )
+        return result.modified_count > 0
+
+    def get_statistics(self):
+        """Get feedback statistics"""
+        pipeline = [
+            {
+                '$group': {
+                    '_id': None,
+                    'total_feedback': {'$sum': 1},
+                    'average_rating': {'$avg': '$rating'},
+                    'rating_distribution': {
+                        '$push': '$rating'
+                    },
+                    'type_distribution': {
+                        '$push': '$type'
+                    }
+                }
+            }
+        ]
+
+        result = list(self.collection.aggregate(pipeline))
+        if result:
+            stats = result[0]
+            # Count rating distribution
+            rating_counts = {}
+            for rating in stats.get('rating_distribution', []):
+                if rating is not None:
+                    rating_counts[rating] = rating_counts.get(rating, 0) + 1
+
+            # Count type distribution
+            type_counts = {}
+            for feedback_type in stats.get('type_distribution', []):
+                if feedback_type:
+                    type_counts[feedback_type] = type_counts.get(feedback_type, 0) + 1
+
+            return {
+                'total_feedback': stats.get('total_feedback', 0),
+                'average_rating': round(stats.get('average_rating', 0), 2),
+                'rating_distribution': rating_counts,
+                'type_distribution': type_counts
+            }
+        return {
+            'total_feedback': 0,
+            'average_rating': 0.0,
+            'rating_distribution': {},
+            'type_distribution': {}
+        }
+
+    def add_vote(self, feedback_id, user_id):
+        """Add a vote to a feature request"""
+        # Check if user already voted
+        feedback = self.collection.find_one({
+            '_id': ObjectId(feedback_id),
+            'voters': user_id
+        })
+
+        if feedback:
+            return None  # User already voted
+
+        # Add vote
+        result = self.collection.update_one(
+            {'_id': ObjectId(feedback_id)},
+            {
+                '$inc': {'votes': 1},
+                '$push': {'voters': user_id},
+                '$set': {'updated_at': datetime.utcnow()}
+            }
+        )
+
+        if result.modified_count > 0:
+            updated_feedback = self.collection.find_one({'_id': ObjectId(feedback_id)})
+            return {
+                'votes': updated_feedback.get('votes', 0),
+                'voters': updated_feedback.get('voters', [])
+            }
+        return None
 
 class StreamingSessionModel(BaseModel):
     """Streaming session model for managing real-time sessions"""

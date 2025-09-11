@@ -195,6 +195,39 @@
             </div>
         </section>
 
+        <!-- AI Chatbot Assistant -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold mb-4">AI Assistant</h2>
+            <div class="bg-gray-50 p-6 rounded-lg">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-robot text-2xl text-black mr-3"></i>
+                    <h3 class="text-xl font-semibold">Chat with Our AI Assistant</h3>
+                </div>
+                <p class="text-gray-600 mb-4">Get instant help with questions about GestureBridge AI, sign language basics, or troubleshooting.</p>
+
+                <!-- Chat Interface -->
+                <div id="chatContainer" class="hidden">
+                    <div id="chatMessages" class="bg-white border border-gray-200 rounded-lg p-4 mb-4 h-64 overflow-y-auto">
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-comments text-3xl mb-2"></i>
+                            <p>Start a conversation with our AI assistant!</p>
+                        </div>
+                    </div>
+                    <div class="flex">
+                        <input type="text" id="chatInput" placeholder="Ask me anything about GestureBridge AI..."
+                               class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-black">
+                        <button id="sendMessage" class="bg-black text-white px-6 py-2 rounded-r-lg hover:bg-gray-800 transition-colors" aria-label="Send message">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button id="toggleChat" class="bg-black text-white px-6 py-2 rounded-lg hover:bg-gray-800 transition-colors">
+                    <i class="fas fa-comments mr-2"></i> Start Chat
+                </button>
+            </div>
+        </section>
+
         <!-- Help Pages Navigation -->
         <div id="helpPages" class="mt-12">
             <div id="helpContent" class="bg-white p-8 rounded-lg shadow-lg"></div>
@@ -223,6 +256,107 @@
                     const topic = this.textContent.trim();
                     document.getElementById('helpContent').innerHTML = helpTopics[topic] || '<p>Help page not found.</p>';
                 });
+            });
+
+            // Chatbot functionality
+            const toggleChat = document.getElementById('toggleChat');
+            const chatContainer = document.getElementById('chatContainer');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const sendMessage = document.getElementById('sendMessage');
+
+            // Toggle chat interface
+            toggleChat.addEventListener('click', () => {
+                chatContainer.classList.toggle('hidden');
+                if (!chatContainer.classList.contains('hidden')) {
+                    chatInput.focus();
+                }
+            });
+
+            // Send message function
+            async function sendChatMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                // Add user message to chat
+                addMessageToChat('user', message);
+                chatInput.value = '';
+
+                // Show typing indicator
+                addMessageToChat('bot', 'Typing...', true);
+
+                try {
+                    const token = localStorage.getItem('jwt_token'); // Optional JWT token
+                    const headers = {
+                        'Content-Type': 'application/json'
+                    };
+
+                    // Add authorization header only if token exists
+                    if (token) {
+                        headers['Authorization'] = `Bearer ${token}`;
+                    }
+
+                    const response = await fetch('/api/chat/message', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({ message: message })
+                    });
+
+                    const data = await response.json();
+
+                    // Remove typing indicator
+                    removeTypingIndicator();
+
+                    if (data.success) {
+                        addMessageToChat('bot', data.bot_response);
+                    } else {
+                        addMessageToChat('bot', 'Sorry, I encountered an error. Please try again.');
+                    }
+                } catch (error) {
+                    removeTypingIndicator();
+                    addMessageToChat('bot', 'Sorry, I\'m having trouble connecting. Please check your connection and try again.');
+                    console.error('Chat error:', error);
+                }
+            }
+
+            // Add message to chat
+            function addMessageToChat(sender, message, isTyping = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `mb-4 ${sender === 'user' ? 'text-right' : 'text-left'}`;
+
+                const messageContent = document.createElement('div');
+                messageContent.className = `inline-block p-3 rounded-lg max-w-xs lg:max-w-md ${
+                    sender === 'user'
+                        ? 'bg-black text-white'
+                        : 'bg-gray-200 text-gray-800'
+                }`;
+
+                if (isTyping) {
+                    messageContent.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>' + message;
+                    messageContent.id = 'typing-indicator';
+                } else {
+                    messageContent.textContent = message;
+                }
+
+                messageDiv.appendChild(messageContent);
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Remove typing indicator
+            function removeTypingIndicator() {
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.parentElement.remove();
+                }
+            }
+
+            // Event listeners
+            sendMessage.addEventListener('click', sendChatMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
             });
         });
         </script>

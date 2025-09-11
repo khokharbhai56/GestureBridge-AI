@@ -11,6 +11,8 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 
 from database import db
+from config import Config
+import openai
 
 
 streaming_bp = Blueprint('streaming', __name__)
@@ -98,6 +100,7 @@ def process_frame():
             'frame_count': session['statistics']['total_frames'] + 1,
             'translation': {
                 'text': translation_result['translation'],
+                'refined_text': translation_result.get('refined_translation', translation_result['translation']),
                 'confidence': translation_result['confidence'],
                 'timestamp': timestamp
             }
@@ -120,6 +123,7 @@ def process_frame():
         return jsonify({
             'success': True,
             'translation': translation_result['translation'],
+            'refined_translation': translation_result.get('refined_translation', translation_result['translation']),
             'confidence': translation_result['confidence'],
             'language': session['language'],
             'frame_count': session['statistics']['total_frames'] + 1
@@ -220,6 +224,37 @@ def get_user_sessions():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+def refine_translation_with_chatgpt(basic_translation, language, context=None):
+    """
+    Refine basic translation using ChatGPT for more natural language
+    """
+    try:
+        if not Config.OPENAI_API_KEY:
+            return basic_translation  # Return basic if no API key
+
+        openai.api_key = Config.OPENAI_API_KEY
+
+        prompt = f"Refine this sign language translation to make it more natural and conversational: '{basic_translation}'. Language: {language}."
+        if context:
+            prompt += f" Context: {context}"
+
+        response = openai.ChatCompletion.create(
+            model=Config.OPENAI_MODEL,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that refines sign language translations into natural, conversational language."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=100,
+            temperature=0.7
+        )
+
+        refined = response.choices[0].message.content.strip()
+        return refined if refined else basic_translation
+
+    except Exception as e:
+        print(f"Error refining translation: {e}")
+        return basic_translation  # Fallback to basic translation
+
 def process_sign_language_frame(frame, language):
     """
     Process video frame for sign language recognition
@@ -227,7 +262,7 @@ def process_sign_language_frame(frame, language):
     """
     # Placeholder implementation
     import random
-    
+
     sample_translations = {
         'ASL': ['Hello', 'Thank you', 'Please', 'Yes', 'No', 'Good morning', 'How are you?'],
         'BSL': ['Hello', 'Cheers', 'Please', 'Yes', 'No', 'Good morning', 'How are you?'],
@@ -235,12 +270,16 @@ def process_sign_language_frame(frame, language):
         'LSF': ['Bonjour', 'Merci', 'S\'il vous plaît', 'Oui', 'Non', 'Bonjour', 'Comment allez-vous?'],
         'DGS': ['Hallo', 'Danke', 'Bitte', 'Ja', 'Nein', 'Guten Morgen', 'Wie geht es Ihnen?']
     }
-    
+
     translations = sample_translations.get(language, sample_translations['ASL'])
-    translation = random.choice(translations)
+    basic_translation = random.choice(translations)
     confidence = round(random.uniform(0.85, 0.99), 3)
-    
+
+    # Refine translation using ChatGPT
+    refined_translation = refine_translation_with_chatgpt(basic_translation, language)
+
     return {
-        'translation': translation,
+        'translation': basic_translation,
+        'refined_translation': refined_translation,
         'confidence': confidence
     }

@@ -88,6 +88,18 @@ GestureBridge AI combines cutting-edge technology with user-centric design to pr
 - Feature requests
 - Community contributions
 - Continuous improvement pipeline
+- AI-powered feedback analysis with ChatGPT
+- Automated sentiment analysis and improvement suggestions
+- Priority assessment for feedback items
+
+### AI-Powered Chatbot Assistant
+- Intelligent help and support
+- Context-aware responses about app features
+- Sign language learning assistance
+- Troubleshooting guidance
+- 24/7 availability
+- Integration with ChatGPT for natural conversations
+- Fallback responses when API unavailable
 
 ### Analytics and Monitoring
 - Usage statistics
@@ -148,6 +160,8 @@ JWT_SECRET_KEY=your_jwt_secret
 MONGO_URI=mongodb://localhost:27017/gestureBridgeAI
 REDIS_URL=redis://localhost:6379/0
 DEBUG=True
+OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-3.5-turbo
 ```
 
 4. Initialize the database:
@@ -215,13 +229,21 @@ The application will be available at:
   - Send: `{ image: <base64>, token: <JWT> }`
   - Receive: `{ prediction: <label>, confidence: <score> }`
 
+- **Chatbot Assistant:**
+  - `POST /api/chat/message` (JWT optional)
+  - Send: `{ message: <string> }`
+  - Receive: `{ success: <boolean>, bot_response: <string>, user_message: <string> }`
+
 - **History:**
   - `GET /api/history` (JWT required)
   - `POST /api/history` (JWT required)
   - `DELETE /api/history` (JWT required)
 
 - **Feedback:**
-  - `POST /api/feedback` (JWT required)
+  - `POST /api/feedback/submit` (JWT required)
+  - `POST /api/feedback/analyze/<feedback_id>` (JWT required)
+  - `GET /api/feedback/my-feedback` (JWT required)
+  - `GET /api/feedback/statistics` (public)
 
 - **Account:**
   - `DELETE /api/account` (JWT required)

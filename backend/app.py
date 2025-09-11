@@ -14,6 +14,7 @@ from routes.auth import auth_bp
 from routes.streaming import streaming_bp
 from routes.feedback import feedback_bp
 from routes.run_gui import gui_bp
+from routes.chat import chat_bp
 
 # ✅ Create Flask app before using @app.route
 app = Flask(__name__, static_folder='../frontend', static_url_path='/')
@@ -31,6 +32,7 @@ app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(streaming_bp, url_prefix='/api/streaming')
 app.register_blueprint(feedback_bp, url_prefix='/api/feedback')
 app.register_blueprint(gui_bp, url_prefix='/api/gui')
+app.register_blueprint(chat_bp, url_prefix='/api/chat')
 
 # ✅ Home route serving frontend index.html
 @app.route('/')

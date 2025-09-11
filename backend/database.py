@@ -51,9 +51,9 @@ class Database:
     def _initialize_models(self):
         """Initialize database models"""
         try:
-            # Change relative import to absolute import to fix ImportError
+            # Import models from the same directory
             from models import (
-                UserModel, TranslationModel, FeedbackModel, 
+                UserModel, TranslationModel, FeedbackModel,
                 StreamingSessionModel, AnalyticsModel, LanguageModel
             )
             
@@ -93,7 +93,7 @@ class Database:
     def create_indexes(self):
         """Create necessary indexes for collections"""
         try:
-            from .models import create_database_indexes
+            from models import create_database_indexes
             create_database_indexes(self)
             logger.info("All database indexes created successfully")
         except Exception as e:

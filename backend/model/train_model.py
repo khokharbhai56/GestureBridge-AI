@@ -7,6 +7,10 @@ import logging
 from sklearn.model_selection import train_test_split
 from datetime import datetime
 from .model import SignLanguageModel
+import openai
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+from config import Config
 
 # Set up logging
 logging.basicConfig(
@@ -119,7 +123,107 @@ class SignLanguageDataset:
         
         return normalized
 
-def train_model(data_dir, model_save_path, epochs=50, batch_size=32):
+def generate_synthetic_data_with_chatgpt(num_samples=100, language='ASL'):
+    """
+    Generate synthetic training data using ChatGPT
+
+    Args:
+        num_samples: Number of synthetic samples to generate
+        language: Sign language to generate data for
+
+    Returns:
+        List of synthetic text samples
+    """
+    try:
+        if not Config.OPENAI_API_KEY:
+            logger.warning("OpenAI API key not found, skipping synthetic data generation")
+            return []
+
+        openai.api_key = Config.OPENAI_API_KEY
+
+        synthetic_data = []
+
+        # Generate data in batches to avoid token limits
+        batch_size = 20
+        for i in range(0, num_samples, batch_size):
+            current_batch = min(batch_size, num_samples - i)
+
+            prompt = f"""Generate {current_batch} diverse examples of common phrases and sentences that would be signed in {language} (American Sign Language).
+
+Please provide realistic, varied examples including:
+- Greetings and introductions
+- Common questions and answers
+- Everyday expressions
+- Commands and requests
+- Emotional expressions
+
+Format each example as a simple sentence or phrase on a new line.
+Make them natural and conversational."""
+
+            response = openai.ChatCompletion.create(
+                model=Config.OPENAI_MODEL,
+                messages=[
+                    {"role": "system", "content": f"You are a helpful assistant generating training data for {language} sign language recognition."},
+                    {"role": "user", "content": prompt}
+                ],
+                max_tokens=500,
+                temperature=0.7
+            )
+
+            generated_text = response.choices[0].message.content.strip()
+            lines = [line.strip() for line in generated_text.split('\n') if line.strip()]
+
+            synthetic_data.extend(lines)
+            logger.info(f"Generated {len(lines)} synthetic samples (batch {i//batch_size + 1})")
+
+        logger.info(f"Total synthetic data generated: {len(synthetic_data)}")
+        return synthetic_data
+
+    except Exception as e:
+        logger.error(f"Error generating synthetic data: {str(e)}")
+        return []
+
+def augment_dataset_with_synthetic_data(X, y, synthetic_texts, augmentation_factor=2):
+    """
+    Augment the dataset with synthetic text data
+
+    Args:
+        X: Original features
+        y: Original labels
+        synthetic_texts: List of synthetic text samples
+        augmentation_factor: How many times to augment each sample
+
+    Returns:
+        Augmented X and y
+    """
+    try:
+        augmented_X = list(X)
+        augmented_y = list(y)
+
+        # For each synthetic text, create augmented samples
+        for text in synthetic_texts:
+            # Use text length and content to create pseudo-features
+            # This is a simplified approach - in practice, you'd need to map text to gesture features
+            text_features = np.random.rand(21, 3) * 0.1  # 21 hand landmarks, 3D
+
+            # Add some variation for augmentation
+            for _ in range(augmentation_factor):
+                noise = np.random.normal(0, 0.05, text_features.shape)
+                augmented_sample = text_features + noise
+                augmented_X.append(augmented_sample)
+
+                # Assign a random existing class or create new synthetic class
+                synthetic_class = len(np.unique(y))  # New class for synthetic data
+                augmented_y.append(synthetic_class)
+
+        logger.info(f"Dataset augmented from {len(X)} to {len(augmented_X)} samples")
+        return np.array(augmented_X), np.array(augmented_y)
+
+    except Exception as e:
+        logger.error(f"Error augmenting dataset: {str(e)}")
+        return X, y
+
+def train_model(data_dir, model_save_path, epochs=50, batch_size=32, use_synthetic_data=False):
     """
     Train the sign language recognition model
     
@@ -134,7 +238,14 @@ def train_model(data_dir, model_save_path, epochs=50, batch_size=32):
         logger.info("Loading dataset...")
         dataset = SignLanguageDataset(data_dir)
         X, y = dataset.load_data()
-        
+
+        # Generate synthetic data if enabled
+        if use_synthetic_data:
+            logger.info("Generating synthetic data with ChatGPT...")
+            synthetic_texts = generate_synthetic_data_with_chatgpt(num_samples=200, language='ASL')
+            if synthetic_texts:
+                X, y = augment_dataset_with_synthetic_data(X, y, synthetic_texts)
+
         # Convert labels to one-hot encoding
         num_classes = len(np.unique(y))
         y = tf.keras.utils.to_categorical(y, num_classes)
@@ -205,7 +316,9 @@ if __name__ == "__main__":
     
     # Train the model
     try:
-        history = train_model(DATA_DIR, MODEL_SAVE_PATH)
+        # Set to True to enable synthetic data generation with ChatGPT
+        use_synthetic = os.getenv('USE_SYNTHETIC_DATA', 'false').lower() == 'true'
+        history = train_model(DATA_DIR, MODEL_SAVE_PATH, use_synthetic_data=use_synthetic)
         logger.info("Training completed successfully!")
     except Exception as e:
         logger.error(f"Training failed: {str(e)}")

@@ -8,9 +8,80 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
 
 from database import db
+from config import Config
+import openai
 
 
 feedback_bp = Blueprint('feedback', __name__)
+
+def analyze_feedback_with_chatgpt(feedback_data):
+    """
+    Analyze user feedback using ChatGPT to provide insights and suggestions
+    """
+    try:
+        if not Config.OPENAI_API_KEY:
+            return {
+                'analysis': 'Feedback analysis requires OpenAI API key',
+                'suggestions': ['Set up OpenAI API key for automated feedback analysis'],
+                'sentiment': 'neutral'
+            }
+
+        openai.api_key = Config.OPENAI_API_KEY
+
+        feedback_type = feedback_data.get('type', 'general')
+        rating = feedback_data.get('rating', 3)
+        comment = feedback_data.get('comment', '')
+        category = feedback_data.get('category', 'general')
+
+        prompt = f"""Analyze this user feedback for GestureBridge AI sign language translation app:
+
+Feedback Type: {feedback_type}
+Rating: {rating}/5
+Category: {category}
+Comment: {comment}
+
+Please provide:
+1. Sentiment analysis (positive, negative, neutral)
+2. Key insights from the feedback
+3. Specific suggestions for improvement
+4. Priority level (low, medium, high)
+
+Format the response as JSON with keys: sentiment, insights, suggestions, priority"""
+
+        response = openai.ChatCompletion.create(
+            model=Config.OPENAI_MODEL,
+            messages=[
+                {"role": "system", "content": "You are an AI assistant that analyzes user feedback for a sign language translation app. Provide structured analysis in JSON format."},
+                {"role": "user", "content": prompt}
+            ],
+            max_tokens=300,
+            temperature=0.3
+        )
+
+        analysis_text = response.choices[0].message.content.strip()
+
+        # Try to parse as JSON, fallback to text analysis
+        try:
+            import json
+            analysis = json.loads(analysis_text)
+        except:
+            # Fallback parsing
+            analysis = {
+                'sentiment': 'neutral',
+                'insights': [analysis_text],
+                'suggestions': ['Review feedback manually'],
+                'priority': 'medium'
+            }
+
+        return analysis
+
+    except Exception as e:
+        print(f"Feedback analysis error: {e}")
+        return {
+            'analysis': f'Error analyzing feedback: {str(e)}',
+            'suggestions': ['Manual review recommended'],
+            'sentiment': 'neutral'
+        }
 
 @feedback_bp.route('/submit', methods=['POST'])
 @jwt_required()
@@ -44,6 +115,12 @@ def submit_feedback():
             'device_info': data.get('device_info'),
             'url': request.referrer
         }
+
+        # Analyze feedback with ChatGPT if comment is provided
+        analysis = None
+        if comment and len(comment.strip()) > 0:
+            analysis = analyze_feedback_with_chatgpt(feedback_data)
+            feedback_data['ai_analysis'] = analysis
         
         feedback_model = db.get_model('feedback')
         feedback_id = feedback_model.create_feedback(user_id, feedback_data)
@@ -60,12 +137,50 @@ def submit_feedback():
             }
         })
         
-        return jsonify({
+        response_data = {
             'success': True,
             'message': 'Feedback submitted successfully',
             'feedback_id': str(feedback_id)
+        }
+
+        if analysis:
+            response_data['ai_analysis'] = analysis
+
+        return jsonify(response_data)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@feedback_bp.route('/analyze/<feedback_id>', methods=['POST'])
+@jwt_required()
+def analyze_feedback(feedback_id):
+    """Analyze existing feedback using ChatGPT"""
+    try:
+        user_id = get_jwt_identity()
+
+        feedback_model = db.get_model('feedback')
+        feedback = feedback_model.get_feedback_by_id(feedback_id)
+
+        if not feedback:
+            return jsonify({'error': 'Feedback not found'}), 404
+
+        # Check if user owns the feedback or is admin
+        if str(feedback['user_id']) != user_id:
+            # TODO: Add admin check
+            return jsonify({'error': 'Unauthorized to analyze this feedback'}), 403
+
+        # Analyze the feedback
+        analysis = analyze_feedback_with_chatgpt(feedback)
+
+        # Update feedback with analysis
+        feedback_model.update_feedback(feedback_id, {'ai_analysis': analysis})
+
+        return jsonify({
+            'success': True,
+            'analysis': analysis,
+            'message': 'Feedback analyzed successfully'
         })
-        
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
