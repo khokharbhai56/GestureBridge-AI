@@ -150,13 +150,17 @@ document.getElementById('feedbackForm').addEventListener('submit', async functio
     return;
   }
   try {
-    const res = await fetch(`${API_BASE_URL}/feedback`, {
+    const res = await fetch(`${API_BASE_URL}/feedback/submit`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${jwtToken}`
       },
-      body: JSON.stringify({ feedback: feedbackText })
+      body: JSON.stringify({
+        type: 'general',
+        rating: 3,
+        comment: feedbackText
+      })
     });
     if (res.ok) {
       feedbackMsg.innerText = 'Thank you for your feedback!';
