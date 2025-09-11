@@ -84,10 +84,16 @@
                         </div>
                         <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Hot Topic</span>
                     </div>
-                    <div class="flex items-center justify-between text-sm text-gray-500">
-                        <span>234 replies</span>
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span id="replies-1">234 replies</span>
                         <span>Last reply 2h ago</span>
                     </div>
+                    <button class="bg-black text-white px-4 py-2 rounded-lg text-sm comment-btn" data-discussion="1">Comment</button>
+                    <div class="comment-section mt-4 hidden" id="comment-section-1">
+                        <textarea class="w-full border rounded p-2 mb-2" placeholder="Add your comment..." rows="3"></textarea>
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded text-sm submit-comment" data-discussion="1">Submit Comment</button>
+                    </div>
+                    <div class="comments-list mt-4" id="comments-list-1"></div>
                 </div>
                 <div class="border border-gray-200 rounded-lg p-6">
                     <div class="flex items-start justify-between mb-4">
@@ -97,10 +103,16 @@
                         </div>
                         <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Featured</span>
                     </div>
-                    <div class="flex items-center justify-between text-sm text-gray-500">
-                        <span>156 replies</span>
+                    <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                        <span id="replies-2">156 replies</span>
                         <span>Last reply 5h ago</span>
                     </div>
+                    <button class="bg-black text-white px-4 py-2 rounded-lg text-sm comment-btn" data-discussion="2">Comment</button>
+                    <div class="comment-section mt-4 hidden" id="comment-section-2">
+                        <textarea class="w-full border rounded p-2 mb-2" placeholder="Add your comment..." rows="3"></textarea>
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded text-sm submit-comment" data-discussion="2">Submit Comment</button>
+                    </div>
+                    <div class="comments-list mt-4" id="comments-list-2"></div>
                 </div>
             </div>
         </section>
@@ -113,24 +125,24 @@
                     <h3 class="text-xl font-semibold mb-2">Beginners Circle</h3>
                     <p class="text-gray-600 mb-4">New to sign language? Start here!</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-500">1.2k members</span>
-                        <button class="bg-black text-white px-4 py-2 rounded-lg text-sm">Join Group</button>
+                        <span class="text-sm text-gray-500" id="members-1">1.2k members</span>
+                        <button class="bg-black text-white px-4 py-2 rounded-lg text-sm join-group-btn" data-group="1">Join Group</button>
                     </div>
                 </div>
                 <div class="border border-gray-200 rounded-lg p-6">
                     <h3 class="text-xl font-semibold mb-2">Educators Hub</h3>
                     <p class="text-gray-600 mb-4">For teachers and instructors</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-500">856 members</span>
-                        <button class="bg-black text-white px-4 py-2 rounded-lg text-sm">Join Group</button>
+                        <span class="text-sm text-gray-500" id="members-2">856 members</span>
+                        <button class="bg-black text-white px-4 py-2 rounded-lg text-sm join-group-btn" data-group="2">Join Group</button>
                     </div>
                 </div>
                 <div class="border border-gray-200 rounded-lg p-6">
                     <h3 class="text-xl font-semibold mb-2">Tech Innovators</h3>
                     <p class="text-gray-600 mb-4">Discuss AI and technology</p>
                     <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-500">943 members</span>
-                        <button class="bg-black text-white px-4 py-2 rounded-lg text-sm">Join Group</button>
+                        <span class="text-sm text-gray-500" id="members-3">943 members</span>
+                        <button class="bg-black text-white px-4 py-2 rounded-lg text-sm join-group-btn" data-group="3">Join Group</button>
                     </div>
                 </div>
             </div>
@@ -149,7 +161,7 @@
                         <div>
                             <h3 class="text-xl font-semibold mb-2">Global Sign Language Summit</h3>
                             <p class="text-gray-600 mb-4">Virtual conference featuring experts from around the world.</p>
-                            <button class="bg-black text-white px-4 py-2 rounded-lg text-sm">Register Now</button>
+                            <button class="bg-black text-white px-4 py-2 rounded-lg text-sm register-event-btn" data-event="1">Register Now</button>
                         </div>
                     </div>
                 </div>
@@ -162,7 +174,7 @@
                         <div>
                             <h3 class="text-xl font-semibold mb-2">AI Translation Workshop</h3>
                             <p class="text-gray-600 mb-4">Learn advanced techniques for better translations.</p>
-                            <button class="bg-black text-white px-4 py-2 rounded-lg text-sm">Register Now</button>
+                            <button class="bg-black text-white px-4 py-2 rounded-lg text-sm register-event-btn" data-event="2">Register Now</button>
                         </div>
                     </div>
                 </div>
@@ -200,7 +212,7 @@
         <section class="bg-black text-white rounded-lg p-8 text-center">
             <h2 class="text-3xl font-bold mb-4">Join Our Community</h2>
             <p class="text-gray-300 mb-6">Be part of the movement to break communication barriers worldwide.</p>
-            <button class="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+            <button class="bg-white text-black px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors get-started-btn">
                 Get Started
             </button>
         </section>
@@ -236,5 +248,115 @@
 
     <!-- Custom JavaScript -->
     <script src="assets/js/main.js"></script>
+    <script>
+        // Load comments from localStorage
+        function loadComments(discussionId) {
+            const comments = JSON.parse(localStorage.getItem(`comments_${discussionId}`) || '[]');
+            const commentsList = document.getElementById(`comments-list-${discussionId}`);
+            commentsList.innerHTML = '';
+            comments.forEach(comment => {
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'border-t pt-2 mt-2';
+                commentDiv.innerHTML = `<p class="text-sm text-gray-700">${comment.text}</p><p class="text-xs text-gray-500">${comment.time}</p>`;
+                commentsList.appendChild(commentDiv);
+            });
+            // Update reply count
+            const replySpan = document.getElementById(`replies-${discussionId}`);
+            const baseReplies = discussionId === '1' ? 234 : 156;
+            replySpan.textContent = `${baseReplies + comments.length} replies`;
+        }
+
+        // Load join status for groups
+        function loadGroupStatus(groupId) {
+            const joined = localStorage.getItem(`joined_group_${groupId}`);
+            const btn = document.querySelector(`.join-group-btn[data-group="${groupId}"]`);
+            if (joined) {
+                btn.textContent = 'Joined';
+                btn.classList.add('bg-green-600');
+                btn.disabled = true;
+            }
+        }
+
+        // Load register status for events
+        function loadEventStatus(eventId) {
+            const registered = localStorage.getItem(`registered_event_${eventId}`);
+            const btn = document.querySelector(`.register-event-btn[data-event="${eventId}"]`);
+            if (registered) {
+                btn.textContent = 'Registered';
+                btn.classList.add('bg-green-600');
+                btn.disabled = true;
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load comments for discussions
+            loadComments('1');
+            loadComments('2');
+
+            // Load group statuses
+            loadGroupStatus('1');
+            loadGroupStatus('2');
+            loadGroupStatus('3');
+
+            // Load event statuses
+            loadEventStatus('1');
+            loadEventStatus('2');
+
+            // Comment button handlers
+            document.querySelectorAll('.comment-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const discussionId = btn.dataset.discussion;
+                    const section = document.getElementById(`comment-section-${discussionId}`);
+                    section.classList.toggle('hidden');
+                });
+            });
+
+            // Submit comment handlers
+            document.querySelectorAll('.submit-comment').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const discussionId = btn.dataset.discussion;
+                    const textarea = btn.previousElementSibling;
+                    const commentText = textarea.value.trim();
+                    if (commentText) {
+                        const comments = JSON.parse(localStorage.getItem(`comments_${discussionId}`) || '[]');
+                        comments.push({ text: commentText, time: new Date().toLocaleString() });
+                        localStorage.setItem(`comments_${discussionId}`, JSON.stringify(comments));
+                        textarea.value = '';
+                        loadComments(discussionId);
+                        document.getElementById(`comment-section-${discussionId}`).classList.add('hidden');
+                    }
+                });
+            });
+
+            // Join group handlers
+            document.querySelectorAll('.join-group-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const groupId = btn.dataset.group;
+                    localStorage.setItem(`joined_group_${groupId}`, 'true');
+                    loadGroupStatus(groupId);
+                    // Update member count (simulate)
+                    const memberSpan = document.getElementById(`members-${groupId}`);
+                    const current = memberSpan.textContent;
+                    const num = parseFloat(current.replace('k', '')) * 1000 + 1;
+                    memberSpan.textContent = num >= 1000 ? `${(num / 1000).toFixed(1)}k members` : `${num} members`;
+                });
+            });
+
+            // Register event handlers
+            document.querySelectorAll('.register-event-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const eventId = btn.dataset.event;
+                    localStorage.setItem(`registered_event_${eventId}`, 'true');
+                    loadEventStatus(eventId);
+                });
+            });
+
+            // Get Started button handler
+            document.querySelector('.get-started-btn').addEventListener('click', () => {
+                window.location.href = 'register.html';
+            });
+        });
+    </script>
 </body>
 </html>

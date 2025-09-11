@@ -188,10 +188,48 @@
                     <h3 class="text-xl font-semibold mb-2">Community Forum</h3>
                     <p>Connect with other users</p>
                 </a>
-                <a href="#" class="p-6 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+                <div class="p-6 bg-gray-100 rounded-lg">
                     <h3 class="text-xl font-semibold mb-2">Submit Feedback</h3>
-                    <p>Help us improve</p>
-                </a>
+                    <p class="mb-4">Help us improve GestureBridge AI</p>
+                    <button id="showFeedbackForm" class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors">
+                        Submit Feedback
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feedback Form Section -->
+        <section id="feedbackSection" class="mb-12 hidden">
+            <h2 class="text-2xl font-semibold mb-4">Submit Your Feedback</h2>
+            <div class="bg-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+                <form id="helpFeedbackForm">
+                    <div class="mb-4">
+                        <label for="feedbackType" class="block text-sm font-medium text-gray-700 mb-2">Feedback Type</label>
+                        <select id="feedbackType" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black">
+                            <option value="general">General Feedback</option>
+                            <option value="bug">Bug Report</option>
+                            <option value="feature">Feature Request</option>
+                            <option value="improvement">Improvement Suggestion</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="helpFeedbackText" class="block text-sm font-medium text-gray-700 mb-2">Your Feedback</label>
+                        <textarea id="helpFeedbackText" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black" rows="5" placeholder="Please share your thoughts, suggestions, or report any issues you've encountered..." required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="feedbackEmail" class="block text-sm font-medium text-gray-700 mb-2">Email (optional)</label>
+                        <input type="email" id="feedbackEmail" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black" placeholder="your.email@example.com">
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <button type="button" id="cancelFeedback" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition-colors">
+                            Submit Feedback
+                        </button>
+                    </div>
+                    <div id="helpFeedbackMsg" class="mt-4 text-green-600 hidden">Thank you for your feedback! We appreciate your input.</div>
+                </form>
             </div>
         </section>
 
@@ -356,6 +394,94 @@
             chatInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     sendChatMessage();
+                }
+            });
+
+            // Feedback form functionality
+            const showFeedbackForm = document.getElementById('showFeedbackForm');
+            const feedbackSection = document.getElementById('feedbackSection');
+            const cancelFeedback = document.getElementById('cancelFeedback');
+            const helpFeedbackForm = document.getElementById('helpFeedbackForm');
+            const helpFeedbackMsg = document.getElementById('helpFeedbackMsg');
+
+            // Show feedback form
+            showFeedbackForm.addEventListener('click', () => {
+                feedbackSection.classList.remove('hidden');
+                feedbackSection.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Cancel feedback form
+            cancelFeedback.addEventListener('click', () => {
+                feedbackSection.classList.add('hidden');
+                helpFeedbackForm.reset();
+                helpFeedbackMsg.classList.add('hidden');
+            });
+
+            // Submit feedback form
+            helpFeedbackForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const feedbackType = document.getElementById('feedbackType').value;
+                const feedbackText = document.getElementById('helpFeedbackText').value.trim();
+                const feedbackEmail = document.getElementById('feedbackEmail').value.trim();
+
+                if (!feedbackText) {
+                    alert('Please enter your feedback before submitting.');
+                    return;
+                }
+
+                helpFeedbackMsg.classList.add('hidden');
+                helpFeedbackMsg.textContent = 'Submitting feedback...';
+                helpFeedbackMsg.classList.remove('hidden');
+                helpFeedbackMsg.classList.remove('text-green-600');
+                helpFeedbackMsg.classList.add('text-blue-600');
+
+                try {
+                    const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+                    const headers = {
+                        'Content-Type': 'application/json'
+                    };
+
+                    if (token) {
+                        headers['Authorization'] = `Bearer ${token}`;
+                    }
+
+                    const feedbackData = {
+                        type: feedbackType,
+                        rating: 3, // Default rating for help center feedback
+                        comment: feedbackText,
+                        category: feedbackType,
+                        email: feedbackEmail || undefined
+                    };
+
+                    const response = await fetch('/api/feedback/submit', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(feedbackData)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
+                        helpFeedbackMsg.textContent = 'Thank you for your feedback! We appreciate your input.';
+                        helpFeedbackMsg.classList.remove('text-blue-600');
+                        helpFeedbackMsg.classList.add('text-green-600');
+                        helpFeedbackForm.reset();
+
+                        // Hide form after successful submission
+                        setTimeout(() => {
+                            feedbackSection.classList.add('hidden');
+                            helpFeedbackMsg.classList.add('hidden');
+                        }, 3000);
+                    } else {
+                        throw new Error(data.error || 'Failed to submit feedback');
+                    }
+
+                } catch (error) {
+                    console.error('Feedback submission error:', error);
+                    helpFeedbackMsg.textContent = 'Error submitting feedback. Please try again or contact support.';
+                    helpFeedbackMsg.classList.remove('text-blue-600');
+                    helpFeedbackMsg.classList.add('text-red-600');
                 }
             });
         });
